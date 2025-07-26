@@ -15,6 +15,7 @@ add_subdirectory(src/core)
 add_subdirectory(src/protocols)
 add_subdirectory(src/rl)
 add_subdirectory(src/utils)
+add_subdirectory(src/monitor)
 
 # Final executable.
 add_executable(load_balancer src/main.cpp)
