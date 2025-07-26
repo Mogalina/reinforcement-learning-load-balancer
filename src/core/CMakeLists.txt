@@ -1,3 +1,5 @@
+# src/core/CMakeLists.txt
+
 file(GLOB CORE_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
 )

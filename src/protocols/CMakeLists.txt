@@ -1,3 +1,5 @@
+# src/protocols/CMakeLists.txt
+
 file(GLOB PROTOCOL_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
 )
