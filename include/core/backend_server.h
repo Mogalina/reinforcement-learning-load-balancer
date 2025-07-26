@@ -26,8 +26,7 @@ class BackendServer {
   int Weight() const { return weight_; }
   bool IsHealthy() const { return healthy_; }
   int ActiveConnections() const { return active_connections_; }
-  std::chrono::steady_clock::time_point
-  LastChecked() const;
+  std::chrono::steady_clock::time_point LastChecked() const;
 
   // Mutator methods for server state.
   void SetHealthy(bool healthy) { healthy_ = healthy; }
