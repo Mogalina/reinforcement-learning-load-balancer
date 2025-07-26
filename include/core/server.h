@@ -14,7 +14,6 @@ namespace load_balancer {
 namespace core {
 
 // The Server class manages the core functionality of the load balancer.
-//
 // This class is responsible for initializing a TCP server, listening for
 // incoming client connections, and dispatching these connections to
 // individual handler threads. It integrates with a Router to determine

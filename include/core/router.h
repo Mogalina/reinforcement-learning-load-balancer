@@ -10,7 +10,6 @@ namespace load_balancer {
 namespace core {
 
 // Manages the selection of backend servers for incoming requests.
-//
 // This class uses a reinforcement learning agent to intelligently pick the most
 // suitable backend server from a pool of available servers.
 class Router {

@@ -8,7 +8,6 @@ namespace load_balancer {
 namespace core {
 
 // Represents a single backend server that can handle requests.
-//
 // Manages the state and properties of a backend server, including its health,
 // active connections, and last check time.
 class BackendServer {
