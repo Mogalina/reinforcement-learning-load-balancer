@@ -9,7 +9,6 @@ namespace load_balancer {
 namespace protocols {
 
 // Abstract base class for handling different network protocols.
-//
 // Defines the interface for protocol-specific handlers responsible for
 // forwarding client traffic to backend servers.
 class ProtocolHandler {

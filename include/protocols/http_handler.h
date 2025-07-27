@@ -9,7 +9,6 @@ namespace load_balancer {
 namespace protocols {
 
 // Handles HTTP/HTTPS traffic forwarding.
-//
 // This class extends ProtocolHandler to specifically manage HTTP and HTTPS
 // client connections, including TLS handshakes and data proxying.
 class HttpHandler : public ProtocolHandler {
@@ -18,7 +17,6 @@ class HttpHandler : public ProtocolHandler {
   ~HttpHandler() override;
 
   // Forwards HTTP/HTTPS traffic between client and backend.
-  //
   // This method performs TLS handshakes on both client and backend sides,
   // then proxies data bidirectionally.
   void Forward() override;
