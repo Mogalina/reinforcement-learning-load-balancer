@@ -2,68 +2,60 @@
 #define LOAD_BALANCER_MONITOR_PROMETHEUS_EXPORTER_H_
 
 #include "metrics/metrics_collector.h"
-#include "core/backend_server.h"
 
-#include <thread>
-#include <mutex>
-#include <atomic>
-#include <vector>
 #include <memory>
-#include <netinet/in.h>
-#include <unordered_map>
+#include <string>
+#include <prometheus/exposer.h>
+#include <prometheus/registry.h>
+#include <prometheus/gauge.h>
+#include <prometheus/counter.h>
 
 namespace load_balancer {
 namespace monitor {
 
-// Exposes collected load balancer metrics in Prometheus format.
-// This class runs a simple HTTP server that, when queried, provides
-// current metrics about backend server performance.
+// Exposes collected load balancer metrics in Prometheus format via an HTTP endpoint.
+// This class leverages the 'prometheus-cpp' library to manage, register, and
+// expose various metrics over a specified HTTP address.
 class PrometheusExporter {
  public:
   explicit PrometheusExporter(
-      int port,
-      std::shared_ptr<MetricsCollector> metrics_collector,
-      const std::vector<std::shared_ptr<core::BackendServer>>& backends);
+      const std::shared_ptr<MetricsCollector>& metrics_collector,
+      const std::string& listen_addr);
 
-  ~PrometheusExporter();
-
-  // Starts the Prometheus exporter server in a new thread.
-  void Start();
-  // Stops the Prometheus exporter server gracefully.
-  void Stop();
+  // Updates the Prometheus metrics with the latest values from the
+  // MetricsCollector.
+  // This method should be called periodically to push current metric values
+  // into the Prometheus registry, which the Exposer then serves.
+  void Export();
 
  private:
-  // The main server loop for accepting client connections.
-  // Runs in a dedicated thread, accepting and handing off incoming HTTP
-  // requests.
-  void Serve();
+  // Helper function to register a counter family.
+  prometheus::Family<prometheus::Counter>& RegisterCounterFamily(
+      const std::string& name, const std::string& help);
 
-  // Handles a single client connection, serving metrics.
-  // Reads the incoming request (though largely ignored for Prometheus), builds
-  // the metrics response, and sends it back to the client.
-  void HandleClient(int client_socket);
+  // Helper function to register a gauge family.
+  prometheus::Family<prometheus::Gauge>& RegisterGaugeFamily(
+      const std::string& name, const std::string& help);
 
-  // Builds the Prometheus-formatted metrics response string.
-  // Iterates through all backends and retrieves their metrics from the
-  // MetricsCollector, formatting them as Prometheus exposition format.
-  std::string BuildMetricsResponse();
-
-  // The TCP port number the exporter listens on.
-  int port_;
-  // The file descriptor for the exporter's listening socket.
-  int server_socket_;
-  // The thread running the 'Serve' method.
-  std::thread server_thread_;
-  // Atomic flag to control the server's running state.
-  std::atomic<bool> running_;
-
-  // Shared pointer to the MetricsCollector for data access.
+  // Shared pointer to the MetricsCollector instance.
   std::shared_ptr<MetricsCollector> metrics_collector_;
-  // List of backend servers whose metrics are exported.
-  std::vector<std::shared_ptr<core::BackendServer>> backends_;
+  // The Prometheus registry where all metrics are registered.
+  std::shared_ptr<prometheus::Registry> registry_;
+  // The Prometheus HTTP server that exposes the metrics.
+  std::unique_ptr<prometheus::Exposer> exposer_;
 
-  // Mutex to protect shared resources during metric export generation.
-  std::mutex export_mutex_;
+  // Metric family for total requests.
+  prometheus::Family<prometheus::Counter>& request_counter_family_;
+  // Metric family for total successes.
+  prometheus::Family<prometheus::Counter>& success_counter_family_;
+  // Metric family for total failures.
+  prometheus::Family<prometheus::Counter>& failure_counter_family_;
+  // Metric family for average latency.
+  prometheus::Family<prometheus::Gauge>& latency_gauge_family_;
+  // Metric family for CPU usage.
+  prometheus::Family<prometheus::Gauge>& cpu_usage_gauge_family_;
+  // Metric family for memory usage.
+  prometheus::Family<prometheus::Gauge>& memory_usage_gauge_family_;
 };
 
 }  // namespace monitor
