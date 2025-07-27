@@ -56,5 +56,22 @@ double MetricsCollector::GetAverageLatency(
   return static_cast<double>(metrics.total_latency_ms) / metrics.latency_samples;
 }
 
+double MetricsCollector::GetCpuUsage(
+    const std::shared_ptr<core::BackendServer>& backend) {
+  std::lock_guard<std::mutex> lock(metrics_mutex_);
+  return metrics_map_[backend->Ip()].cpu_usage_percent;
+}
+
+double MetricsCollector::GetMemoryUsage(
+    const std::shared_ptr<core::BackendServer>& backend) {
+  std::lock_guard<std::mutex> lock(metrics_mutex_);
+  return metrics_map_[backend->Ip()].memory_usage_mb;
+}
+
+const std::unordered_map<std::string, Metrics> MetricsCollector::MetricsMap() {
+  std::lock_guard<std::mutex> lock(metrics_mutex_);
+  return metrics_map_;
+}
+
 }  // namespace monitor
 }  // namespace load_balancer
