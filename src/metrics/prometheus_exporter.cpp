@@ -36,6 +36,7 @@ PrometheusExporter::PrometheusExporter(
           "successes_total", "Total number of successes")),
       failure_counter_family_(RegisterCounterFamily(
           "failures_total", "Total number of failures")),
+      // Initialize Gauge metric families using the helper function.
       latency_gauge_family_(RegisterGaugeFamily(
           "average_latency_ms", "Average latency in milliseconds")),
       cpu_usage_gauge_family_(RegisterGaugeFamily(
