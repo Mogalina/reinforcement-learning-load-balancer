@@ -13,7 +13,8 @@
 namespace load_balancer {
 namespace monitor {
 
-// Exposes collected load balancer metrics in Prometheus format via an HTTP endpoint.
+// Exposes collected load balancer metrics in Prometheus format via an HTTP
+// endpoint.
 // This class leverages the 'prometheus-cpp' library to manage, register, and
 // expose various metrics over a specified HTTP address.
 class PrometheusExporter {
