@@ -7,8 +7,28 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Output dir for binaries.
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-# Include dirs.
+# Include directories.
 include_directories(include)
+
+# Enable logging.
+Include(FetchContent)
+FetchContent_Declare(
+    spdlog
+    GIT_REPOSITORY https://github.com/gabime/spdlog.git
+    GIT_TAG v1.9.2
+)
+FetchContent_MakeAvailable(spdlog)
+
+# Enable TLS/HTTPS support.
+find_package(OpenSSL REQUIRED)
+
+# Prometheus client.
+FetchContent_Declare(
+    prometheus-cpp
+    GIT_REPOSITORY https://github.com/jupp0r/prometheus-cpp.git
+    GIT_TAG        v1.0.0
+)
+FetchContent_MakeAvailable(prometheus-cpp)
 
 # Subdirectories.
 add_subdirectory(src/core)
@@ -23,21 +43,9 @@ add_executable(load_balancer src/main.cpp)
 
 # Link all components.
 target_link_libraries(load_balancer PRIVATE
-    core
-    protocols
-    rl
-    utils)
-
-# Enable logging.
-Include(FetchContent)
-FetchContent_Declare(
-    spdlog
-    GIT_REPOSITORY https://github.com/gabime/spdlog.git
-    GIT_TAG v1.9.2
-)
-FetchContent_MakeAvailable(spdlog)
-
-# Enable TLS/HTTPS support.
-find_package(OpenSSL REQUIRED)
-target_link_libraries(protocols PRIVATE OpenSSL::SSL OpenSSL::Crypto)
-target_link_libraries(utils PRIVATE OpenSSL::SSL OpenSSL::Crypto)
+    load_balancer_core
+    load_balancer_protocols
+    load_balancer_rl
+    load_balancer_utils
+    load_balancer_monitor
+    load_balancer_metrics)
